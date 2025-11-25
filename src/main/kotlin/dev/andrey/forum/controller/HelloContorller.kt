@@ -1,4 +1,4 @@
-package dev.andrey.forum
+package dev.andrey.forum.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
