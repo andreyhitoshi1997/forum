@@ -1,17 +1,15 @@
 package dev.andrey.forum.dto
 
 import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import org.jetbrains.annotations.NotNull
 
-data class NovoTopicoForm(
+data class AtualizacaoTopicoForm (
+    @field:NotNull
+    val id: Long,
     @field:NotEmpty
     @field:Size(min = 5, max = 100)
     val titulo: String,
     @field:NotEmpty
-    val mensagem: String,
-    @field:NotNull
-    val idCurso: Long,
-    @field:NotNull
-    val idUsuario: Long
+    val mensagem: String
 )
