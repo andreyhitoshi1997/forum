@@ -3,6 +3,7 @@ package dev.andrey.forum.service
 import dev.andrey.forum.dto.AtualizacaoTopicoForm
 import dev.andrey.forum.dto.NovoTopicoForm
 import dev.andrey.forum.dto.TopicoView
+import dev.andrey.forum.exceptions.IllegalArgumentException
 import dev.andrey.forum.mapper.TopicoFormMapper
 import dev.andrey.forum.mapper.TopicoViewMapper
 import dev.andrey.forum.model.Topico
@@ -34,15 +35,11 @@ class TopicoService(
         return topicoViewMapper.map(topico)
     }
 
-    fun deletar(id: Long) {
-        topicos.removeIf { it.id == id }
-    }
-
-    fun atualizar(form: AtualizacaoTopicoForm) {
+    fun atualizar(form: AtualizacaoTopicoForm): TopicoView{
         val topico = topicos.find { it.id == form.id }
             ?: throw IllegalArgumentException("Topico com id ${form.id} não encontrado")
         val index = topicos.indexOf(topico)
-        topicos[index] = Topico(
+        val novoTopico= Topico(
             id = form.id,
             titulo = form.titulo,
             mensagem = form.mensagem,
@@ -50,5 +47,11 @@ class TopicoService(
             curso = topico.curso,
             status = topico.status
         )
+        topicos[index] = novoTopico
+        return topicoViewMapper.map(novoTopico)
+    }
+
+    fun deletar(id: Long) {
+        topicos.removeIf { it.id == id }
     }
 }

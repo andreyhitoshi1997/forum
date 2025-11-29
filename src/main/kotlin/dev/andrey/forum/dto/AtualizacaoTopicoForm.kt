@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull
 
 data class AtualizacaoTopicoForm (
     @field:NotNull
-    val id: Long,
+    var id: Long,
     @field:NotEmpty
     @field:Size(min = 5, max = 100)
     val titulo: String,

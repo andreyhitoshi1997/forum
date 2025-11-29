@@ -41,7 +41,8 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PutMapping("/{id}")
-    fun atualizar(@PathVariable id: Long, @RequestBody @Valid form: AtualizacaoTopicoForm) {
-        return service.atualizar(form)
+    fun atualizar(@PathVariable id: Long, @RequestBody @Valid form: AtualizacaoTopicoForm): ResponseEntity<TopicoView> {
+        form.id = id
+        return ResponseEntity.ok(service.atualizar(form))
     }
 }
