@@ -7,39 +7,38 @@ import dev.andrey.forum.exceptions.IllegalArgumentException
 import dev.andrey.forum.mapper.TopicoFormMapper
 import dev.andrey.forum.mapper.TopicoViewMapper
 import dev.andrey.forum.model.Topico
+import dev.andrey.forum.repository.TopicoRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class TopicoService(
+    private val repository: TopicoRepository,
     private val topicoViewMapper: TopicoViewMapper,
-    private val topicoFormMapper: TopicoFormMapper
+    private val topicoFormMapper: TopicoFormMapper,
+    @Value("\${app.mensagem.topico.nao-encontrado:Topico com id %d não encontrado}")
+    private val mensagemErroTopico: String
 ) {
-    private val topicos: MutableList<Topico> = mutableListOf()
 
     fun listar(): List<TopicoView> {
-        return topicos.map { t ->
-            topicoViewMapper.map(t)
-        }
+        return this.repository.findAll().map { topicoViewMapper.map(it) }
     }
 
     fun buscarPorId(id: Long): TopicoView {
-        val topico = topicos.find { it.id == id }
-            ?: throw IllegalArgumentException("Topico com id $id não encontrado")
+        val topico = this.repository.findById(id)
+            .orElseThrow { IllegalArgumentException(mensagemErroTopico.format(id)) }
         return topicoViewMapper.map(topico)
     }
 
     fun cadastrar(dto: NovoTopicoForm): TopicoView {
-        val topico = topicoFormMapper.map(dto)
-        topico.id = (topicos.size + 1).toLong()
-        topicos.add(topico)
+        val topico = this.repository.save(topicoFormMapper.map(dto))
         return topicoViewMapper.map(topico)
     }
 
-    fun atualizar(form: AtualizacaoTopicoForm): TopicoView{
-        val topico = topicos.find { it.id == form.id }
-            ?: throw IllegalArgumentException("Topico com id ${form.id} não encontrado")
-        val index = topicos.indexOf(topico)
-        val novoTopico= Topico(
+    fun atualizar(form: AtualizacaoTopicoForm): TopicoView {
+        val topico = this.repository.findById(form.id)
+            .orElseThrow { IllegalArgumentException(mensagemErroTopico.format(form.id)) }
+        val topicoAtualizado = Topico(
             id = form.id,
             titulo = form.titulo,
             mensagem = form.mensagem,
@@ -47,11 +46,11 @@ class TopicoService(
             curso = topico.curso,
             status = topico.status
         )
-        topicos[index] = novoTopico
-        return topicoViewMapper.map(novoTopico)
+        val topicoSalvo = this.repository.save(topicoAtualizado)
+        return topicoViewMapper.map(topicoSalvo)
     }
 
     fun deletar(id: Long) {
-        topicos.removeIf { it.id == id }
+        this.repository.deleteById(id)
     }
 }

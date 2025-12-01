@@ -1,34 +1,27 @@
 package dev.andrey.forum.service
 
 import dev.andrey.forum.model.Curso
+import dev.andrey.forum.repository.CursoRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.Arrays
 
 @Service
-class CursoService(var cursos: List<Curso>) {
-    init {
-        val curso1 = Curso(
-            id = 1,
-            nome = "Kotlin",
-            categoria = "Programação"
-        )
-        val curso2 = Curso(
-            id = 2,
-            nome = "Java",
-            categoria = "Programação"
-        )
-        val curso3 = Curso(
-            id = 3,
-            nome = "Python",
-            categoria = "Programação"
-        )
-        cursos = Arrays.asList(curso1, curso2, curso3)
-    }
+class CursoService(
+    private val repository: CursoRepository,
+    @Value("\${app.curso.padrao.nome:Curso Padrão}")
+    private val cursoPadraoNome: String,
+    @Value("\${app.curso.padrao.categoria:Geral}")
+    private val cursoPadraoCategoria: String
+) {
 
     fun buscarPorId(id: Long): Curso {
-        return cursos.stream().filter { c -> c.id == id }.findFirst()
-            .orElseThrow { IllegalArgumentException("Curso com id $id não encontrado") }
+        return this.repository.findById(id)
+            .orElseGet {
+                val cursoPadrao = Curso(
+                    nome = cursoPadraoNome,
+                    categoria = cursoPadraoCategoria
+                )
+                this.repository.save(cursoPadrao)
+            }
     }
-
-
 }

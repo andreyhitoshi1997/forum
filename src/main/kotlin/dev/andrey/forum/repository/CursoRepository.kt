@@ -1,7 +1,7 @@
 package dev.andrey.forum.repository
 
-import dev.andrey.forum.model.Topico
+import dev.andrey.forum.model.Curso
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface TopicoRepository: JpaRepository<Topico, Long> {
+interface CursoRepository: JpaRepository<Curso, Long> {
 }

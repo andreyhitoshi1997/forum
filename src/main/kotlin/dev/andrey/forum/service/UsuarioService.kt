@@ -1,34 +1,28 @@
 package dev.andrey.forum.service
 
 import dev.andrey.forum.model.Usuario
+import dev.andrey.forum.repository.UsuarioRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.Arrays
 
 @Service
-class UsuarioService(var usuarios: List<Usuario>) {
-    init {
-        val usuario1 = Usuario(
-            id = 1,
-            nome = "Andrey",
-            email = "usuario@email.com"
-        )
-        val usuario2 = Usuario(
-            id = 2,
-            nome = "Maria",
-            email = "autor2@email.com"
-        )
-        val usuario3 = Usuario(
-            id = 3,
-            nome = "João",
-            email = "autor3@email.com"
-        )
+class UsuarioService(
+    private val repository: UsuarioRepository,
+    @Value("\${app.usuario.padrao.nome:Usuário Padrão}")
+    private val usuarioPadraoNome: String,
+    @Value("\${app.usuario.padrao.email:usuario@padrao.com}")
+    private val usuarioPadraoEmail: String
+) {
 
-        usuarios = Arrays.asList(usuario1, usuario2, usuario3)
-    }
-
-    fun buscarPorId(dto: Long): Usuario {
-        return usuarios.stream().filter { u -> u.id == dto }.findFirst()
-            .orElseThrow { IllegalArgumentException("Usuario com id $dto não encontrado") }
+    fun buscarPorId(id: Long): Usuario {
+        return this.repository.findById(id)
+            .orElseGet {
+                val usuarioPadrao = Usuario(
+                    nome = usuarioPadraoNome,
+                    email = usuarioPadraoEmail
+                )
+                this.repository.save(usuarioPadrao)
+            }
     }
 
 }
