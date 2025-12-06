@@ -9,6 +9,7 @@ import dev.andrey.forum.mapper.TopicoViewMapper
 import dev.andrey.forum.model.Topico
 import dev.andrey.forum.repository.TopicoRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,8 +21,13 @@ class TopicoService(
     private val mensagemErroTopico: String
 ) {
 
-    fun listar(): List<TopicoView> {
-        return this.repository.findAll().map { topicoViewMapper.map(it) }
+    fun listar(nomeCurso: String?, paginacao: Pageable): List<TopicoView> {
+        val topicos = if(nomeCurso == null) {
+            this.repository.findAll(paginacao).content
+        } else {
+            this.repository.findByCursoNome(nomeCurso, paginacao).content
+        }
+        return topicos.map { topicoViewMapper.map(it) }
     }
 
     fun buscarPorId(id: Long): TopicoView {

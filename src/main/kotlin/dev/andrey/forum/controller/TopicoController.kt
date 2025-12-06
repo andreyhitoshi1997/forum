@@ -5,6 +5,8 @@ import dev.andrey.forum.dto.NovoTopicoForm
 import dev.andrey.forum.dto.TopicoView
 import dev.andrey.forum.service.TopicoService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
@@ -15,8 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
-    fun listar(): List<TopicoView> {
-        return service.listar()
+    fun listar(@RequestParam(required = false) nomeCurso: String?, paginacao: Pageable, direction: Sort.Direction = Sort.Direction.DESC): List<TopicoView> {
+        return service.listar(nomeCurso, paginacao)
     }
 
     @GetMapping("/{id}")
