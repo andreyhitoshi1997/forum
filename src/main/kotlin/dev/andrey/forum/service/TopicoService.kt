@@ -2,12 +2,14 @@ package dev.andrey.forum.service
 
 import dev.andrey.forum.dto.AtualizacaoTopicoForm
 import dev.andrey.forum.dto.NovoTopicoForm
+import dev.andrey.forum.dto.TopicoPorCategoriaDTO
 import dev.andrey.forum.dto.TopicoView
 import dev.andrey.forum.exceptions.IllegalArgumentException
 import dev.andrey.forum.mapper.TopicoFormMapper
 import dev.andrey.forum.mapper.TopicoViewMapper
 import dev.andrey.forum.model.Topico
 import dev.andrey.forum.repository.TopicoRepository
+import jakarta.persistence.EntityManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -17,6 +19,7 @@ class TopicoService(
     private val repository: TopicoRepository,
     private val topicoViewMapper: TopicoViewMapper,
     private val topicoFormMapper: TopicoFormMapper,
+    private val em: EntityManager,
     @Value("\${app.mensagem.topico.nao-encontrado:Topico com id %d não encontrado}")
     private val mensagemErroTopico: String
 ) {
@@ -25,6 +28,7 @@ class TopicoService(
         val topicos = if(nomeCurso == null) {
             this.repository.findAll(paginacao).content
         } else {
+            print(em)
             this.repository.findByCursoNome(nomeCurso, paginacao).content
         }
         return topicos.map { topicoViewMapper.map(it) }
@@ -58,5 +62,9 @@ class TopicoService(
 
     fun deletar(id: Long) {
         this.repository.deleteById(id)
+    }
+
+    fun relatorio(): List<TopicoPorCategoriaDTO> {
+        return this.repository.relatorio()
     }
 }

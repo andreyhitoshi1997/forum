@@ -17,11 +17,17 @@ class UsuarioService(
     fun buscarPorId(id: Long): Usuario {
         return this.repository.findById(id)
             .orElseGet {
-                val usuarioPadrao = Usuario(
-                    nome = usuarioPadraoNome,
-                    email = usuarioPadraoEmail
-                )
-                this.repository.save(usuarioPadrao)
+                // Verificar se o usuário padrão já existe pelo email
+                val usuarioExistente = this.repository.findByEmail(usuarioPadraoEmail)
+                if (usuarioExistente != null) {
+                    usuarioExistente
+                } else {
+                    val usuarioPadrao = Usuario(
+                        nome = usuarioPadraoNome,
+                        email = usuarioPadraoEmail
+                    )
+                    this.repository.save(usuarioPadrao)
+                }
             }
     }
 
