@@ -1,2 +1,2 @@
-dev.andrey.forum.config.DotenvInitializer
+org.springframework.context.ApplicationContextInitializer=dev.andrey.forum.config.DotenvInitializer
 

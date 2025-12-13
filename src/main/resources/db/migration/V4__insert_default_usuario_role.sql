@@ -1,7 +1,7 @@
--- Ensure usuario_role associations are correct
--- This migration ensures all users have at least one role assigned
+-- V4__insert_default_usuario_role.sql
+-- Insert default usuario_role associations
 
-INSERT IGNORE INTO usuario_role (usuario_id, role_id)
+INSERT INTO usuario_role (usuario_id, role_id)
 SELECT u.id, r.id
 FROM usuario u
 CROSS JOIN role r

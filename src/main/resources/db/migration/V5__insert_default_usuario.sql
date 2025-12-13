@@ -1,0 +1,4 @@
+-- V5__insert_default_usuario.sql
+-- This migration is kept for compatibility
+-- The default usuario will be created by InitializeDataConfiguration CommandLineRunner
+-- if it doesn't already exist in the database

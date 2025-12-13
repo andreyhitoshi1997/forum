@@ -6,8 +6,8 @@ spring:
   datasource:
     driverClassName: org.h2.Driver
     url: jdbc:h2:mem:forumdb
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:senha123}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -24,6 +24,12 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
+    placeholders:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+jwt:
+    secret: ${JWT_SECRET}
 
 server:
   port: 8081
@@ -48,3 +54,12 @@ xai:
 openai:
   api:
     key: ${OPENAI_API_KEY:}
+
+# Default User Configuration
+app:
+  usuario:
+    padrao:
+      nome: ${APP_USUARIO_PADRAO_NOME}
+      email: ${APP_USUARIO_PADRAO_EMAIL}
+      password: ${APP_USUARIO_PADRAO_PASSWORD}
+

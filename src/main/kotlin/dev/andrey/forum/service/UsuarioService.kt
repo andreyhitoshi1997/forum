@@ -13,27 +13,16 @@ import org.springframework.stereotype.Service
 @Service
 class UsuarioService(
     private val repository: UsuarioRepository,
-    @Value("\${app.usuario.padrao.nome:Usuário Padrão}")
+    @Value("\${app.usuario.padrao.nome}")
     private val usuarioPadraoNome: String,
-    @Value("\${app.usuario.padrao.email:usuario@padrao.com}")
-    private val usuarioPadraoEmail: String,
-    @Value("\${app.usuario.padrao.password:senha123}")
-    private val usuarioPadraoPassword: String
+    @Value("\${app.usuario.padrao.email}")
+    private val usuarioPadraoEmail: String
 ): UserDetailsService {
 
     fun buscarPorId(id: Long): Usuario {
         return this.repository.findById(id)
-            .orElseGet {
-                // Retornar usuário padrão se não encontrar
-                this.repository.findByEmail(usuarioPadraoEmail)
-                    ?: run {
-                        val usuarioPadrao = Usuario(
-                            nome = usuarioPadraoNome,
-                            email = usuarioPadraoEmail,
-                            password = usuarioPadraoPassword
-                        )
-                        this.repository.save(usuarioPadrao)
-                    }
+            .orElseThrow {
+                RuntimeException("Usuário com ID $id não encontrado")
             }
     }
 

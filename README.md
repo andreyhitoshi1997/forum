@@ -60,14 +60,31 @@ git clone https://github.com/andreyhitoshi1997/forum.git
 cd forum
 ```
 
-### 2. Verify Java Installation
+### 2. Configure Development Environment
+
+For detailed setup instructions including environment variables and database configuration, see [SETUP.md](./SETUP.md).
+
+Quick start:
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit with your local credentials
+nano .env
+
+# Run setup script (optional but recommended)
+chmod +x setup-dev.sh
+./setup-dev.sh
+```
+
+### 3. Verify Java Installation
 
 ```bash
 java -version
 # Expected output: java version "21" or higher
 ```
 
-### 3. Build the Project
+### 4. Build the Project
 
 ```bash
 ./gradlew clean build
@@ -78,7 +95,7 @@ On Windows, use:
 gradlew.bat clean build
 ```
 
-### 4. Verify the Build
+### 5. Verify the Build
 
 ```bash
 ./gradlew -v
@@ -204,6 +221,74 @@ curl http://localhost:8080/hello
 ```
 Hello World!
 ```
+
+### Authentication
+
+This application uses **HTTP Basic Authentication** with Spring Security.
+
+#### Default Test Credentials
+
+- **Username (Email):** `usuario@teste.com`
+- **Password:** `senha123`
+- **User ID:** `1`
+- **Role:** `LEITURA_ESCRITA`
+
+#### How to Authenticate
+
+**Option 1: Using Authorization Header (Basic Auth)**
+
+```bash
+# The header value is: Base64(username:password)
+# Base64(usuario@teste.com:senha123) = dXN1YXJpb0B0ZXN0ZS5jb206c2VuaGExMjM=
+
+curl -X GET http://localhost:8081/topicos \
+  -H "Authorization: Basic dXN1YXJpb0B0ZXN0ZS5jb206c2VuaGExMjM="
+```
+
+**Option 2: Using curl with --user flag**
+
+```bash
+curl -X GET http://localhost:8081/topicos \
+  --user usuario@teste.com:senha123
+```
+
+**Option 3: Using Postman**
+1. Select the request
+2. Go to **Authorization** tab
+3. Choose **Basic Auth**
+4. Enter:
+   - Username: `usuario@teste.com`
+   - Password: `senha123`
+
+**Option 4: Using JavaScript/Fetch**
+
+```javascript
+const auth = btoa('usuario@teste.com:senha123');
+fetch('http://localhost:8081/topicos', {
+  headers: {
+    'Authorization': `Basic ${auth}`
+  }
+})
+.then(r => r.json())
+.then(data => console.log(data));
+```
+
+**Option 5: Using Python**
+
+```python
+import requests
+from requests.auth import HTTPBasicAuth
+
+response = requests.get(
+    'http://localhost:8081/topicos',
+    auth=HTTPBasicAuth('usuario@teste.com', 'senha123')
+)
+print(response.json())
+```
+
+For more details, see [AUTENTICACAO.md](./AUTENTICACAO.md).
+
+---
 
 ### Available Endpoints
 
