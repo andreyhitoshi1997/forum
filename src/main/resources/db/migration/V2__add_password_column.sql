@@ -1,0 +1,2 @@
+ALTER TABLE usuario ADD COLUMN password VARCHAR(255) NOT NULL DEFAULT 'senha123';
+

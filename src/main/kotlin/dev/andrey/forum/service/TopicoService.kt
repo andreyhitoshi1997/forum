@@ -28,7 +28,6 @@ class TopicoService(
         val topicos = if(nomeCurso == null) {
             this.repository.findAll(paginacao).content
         } else {
-            print(em)
             this.repository.findByCursoNome(nomeCurso, paginacao).content
         }
         return topicos.map { topicoViewMapper.map(it) }
