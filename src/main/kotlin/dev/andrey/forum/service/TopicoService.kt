@@ -11,6 +11,8 @@ import dev.andrey.forum.model.Topico
 import dev.andrey.forum.repository.TopicoRepository
 import jakarta.persistence.EntityManager
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -24,6 +26,7 @@ class TopicoService(
     private val mensagemErroTopico: String
 ) {
 
+    @Cacheable(cacheNames = ["topico"], key = "#root.method.name")
     fun listar(nomeCurso: String?, paginacao: Pageable): List<TopicoView> {
         val topicos = if(nomeCurso == null) {
             this.repository.findAll(paginacao).content
@@ -33,17 +36,20 @@ class TopicoService(
         return topicos.map { topicoViewMapper.map(it) }
     }
 
+    @Cacheable("topicos")
     fun buscarPorId(id: Long): TopicoView {
         val topico = this.repository.findById(id)
             .orElseThrow { IllegalArgumentException(mensagemErroTopico.format(id)) }
         return topicoViewMapper.map(topico)
     }
 
+    @CacheEvict("topicos", allEntries = true)
     fun cadastrar(dto: NovoTopicoForm): TopicoView {
         val topico = this.repository.save(topicoFormMapper.map(dto))
         return topicoViewMapper.map(topico)
     }
 
+    @CacheEvict("topicos", allEntries = true)
     fun atualizar(form: AtualizacaoTopicoForm): TopicoView {
         val topico = this.repository.findById(form.id)
             .orElseThrow { IllegalArgumentException(mensagemErroTopico.format(form.id)) }
@@ -59,6 +65,7 @@ class TopicoService(
         return topicoViewMapper.map(topicoSalvo)
     }
 
+    @CacheEvict("topicos", allEntries = true)
     fun deletar(id: Long) {
         this.repository.deleteById(id)
     }

@@ -22,13 +22,11 @@ class TopicoController(private val service: TopicoService) {
 
     @GetMapping
     //Uso de cache nos metodos de listar, consutla e que são poucos alterados em Banco
-    @Cacheable("topicos")
     fun listar(@RequestParam(required = false) nomeCurso: String?, paginacao: Pageable): List<TopicoView> {
         return service.listar(nomeCurso, paginacao)
     }
 
     @GetMapping("/{id}")
-    @Cacheable("topicos")
     fun buscarPorId(@PathVariable id: Long): TopicoView {
         //@PathVariable para entender uqe o id da URI é o id do método
         return service.buscarPorId(id)
@@ -42,7 +40,6 @@ class TopicoController(private val service: TopicoService) {
     @PostMapping
     @Transactional
     //Invalida o Cache e allentrie invalida todos
-    @CacheEvict("topicos", allEntries = true)
     fun cadastrar(
         @RequestBody dto: NovoTopicoForm,
         uriBuilder: UriComponentsBuilder
@@ -53,14 +50,13 @@ class TopicoController(private val service: TopicoService) {
     }
 
     //Invalida o Cache e allentrie invalida todos
-    @CacheEvict("topicos", allEntries = true)
+
     @DeleteMapping("/{id}")
     fun remover(@PathVariable id: Long) {
         service.deletar(id)
     }
 
     //Invalida o Cache e allentrie invalida todos
-    @CacheEvict("topicos", allEntries = true)
     @PutMapping("/{id}")
     fun atualizar(@PathVariable id: Long, @RequestBody @Valid form: AtualizacaoTopicoForm): ResponseEntity<TopicoView> {
         form.id = id

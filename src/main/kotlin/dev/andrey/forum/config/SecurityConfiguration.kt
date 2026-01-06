@@ -49,6 +49,7 @@ class SecurityConfiguration {
                 authorize
                     .requestMatchers("/").permitAll()
                     .requestMatchers("/api/public/**").permitAll()
+                    .requestMatchers("/relatorios").hasAuthority("ADMIN")
                     //.requestMatchers("/topicos").hasAuthority("LEITURA_ESCRITA")
                     .requestMatchers(HttpMethod.POST, "/login").permitAll()
                     .anyRequest().authenticated()
